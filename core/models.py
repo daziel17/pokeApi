@@ -10,7 +10,7 @@ class Pokemon(models.Model):
     pokemon = models.ForeignKey('self', null=True, blank=True, related_name="preevolution", on_delete=models.CASCADE)
 
     def __str__(self):
-        return str(self.id) + ' ' + self.name + ' parent ' + (self.pokemon.name if self.pokemon is not None else 'None')
+        return str(self.id) + ' ' + self.name + ' pre_evolution: ' + (self.pokemon.name if self.pokemon is not None else 'None')
 
 
 class PokemonStats(models.Model):

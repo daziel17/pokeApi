@@ -12,8 +12,7 @@ class Command(BaseCommand):
 
         id = options.get("ID", None)
 
-        if(id is not None):
-
+        if id is not None:
             process = ProcessCommandPokemon()
             process.execute(id[0])
             self.stdout.write("Proceso ejecutado con éxito!")

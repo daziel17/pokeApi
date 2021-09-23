@@ -7,9 +7,9 @@ class ProcessCommandPokemon:
         self.pokemons = []
         self.pokemons_stats = []
 
-    def execute(self, id:int):
-
-        evolution_chain = self.call_service("https://pokeapi.co/api/v2/evolution-chain/" + str(id))
+    def execute(self, id_evolution_chain: int):
+    
+        evolution_chain = self.call_service("https://pokeapi.co/api/v2/evolution-chain/" + str(id_evolution_chain))
 
         if evolution_chain is not None:
             if evolution_chain['chain'] is not None:
@@ -22,7 +22,8 @@ class ProcessCommandPokemon:
             if not Pokemon.objects.filter(pk=pokemon.id).exists():
                 pokemon.save()
 
-                for stat in filter(lambda a: a.pokemon.id == pokemon.id, self.pokemons_stats):                    pokemon.pokemonstats_set.add(stat, bulk=False)
+                for stat in filter(lambda a: a.pokemon.id == pokemon.id, self.pokemons_stats):
+                    pokemon.pokemonstats_set.add(stat, bulk=False)
 
         return self.pokemons
 
