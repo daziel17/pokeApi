@@ -29,7 +29,8 @@ class ProcessCommandPokemon:
                     pokemon.save()
                     for stat in filter(lambda a: a.pokemon.id == pokemon.id, self.pokemons_stats):
                         pokemon.pokemonstats_set.add(stat, bulk=False)
-            PokemonEvolution.objects.bulk_create(self.pokemons_evolutions)
+                    PokemonEvolution.objects.bulk_create(list(filter(lambda a: a.pokemon.id == pokemon.id,
+                                                                     self.pokemons_evolutions)))
 
         return self.pokemons
 
