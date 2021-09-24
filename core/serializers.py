@@ -1,10 +1,4 @@
 from rest_framework import serializers
-from core.models import Pokemon
-
-
-class PokemonEvolutionSerializer(serializers.Serializer):
-    id = serializers.IntegerField(read_only=True)
-    name = serializers.CharField(read_only=True)
 
 
 class PokemonStatsSerializer(serializers.Serializer):
@@ -12,26 +6,32 @@ class PokemonStatsSerializer(serializers.Serializer):
     base_stat = serializers.IntegerField(read_only=True)
 
 
+class PokemonEvolutionPartialSerializer(serializers.Serializer):
+    id = serializers.IntegerField(read_only=True, source="evolution_pokemon.id")
+    name = serializers.CharField(read_only=True, source="evolution_pokemon.name")
+
+
+class PokemonPreEvolutionPartialSerializer(serializers.Serializer):
+    id = serializers.IntegerField(read_only=True, source="pokemon.id")
+    name = serializers.CharField(read_only=True, source="pokemon.name")
+
+
+class EvolutionSerializer(serializers.Serializer):
+    pre_evolution = PokemonPreEvolutionPartialSerializer(source='pokemon_evolution', many=True)
+    evolution = PokemonEvolutionPartialSerializer(source='pokemon_base', many=True)
+
+
 class PokemonSerializer(serializers.Serializer):
     id = serializers.IntegerField(read_only=True)
     name = serializers.CharField(read_only=True)
     height = serializers.IntegerField(read_only=True)
     weight = serializers.IntegerField(read_only=True)
-    evolution = serializers.SerializerMethodField()
-
+    evolutions = serializers.SerializerMethodField()
     stats = PokemonStatsSerializer(many=True, source='pokemonstats_set')
 
-    def get_evolution(self, obj):
-        pokemon_evolution = Pokemon.objects.filter(pokemon=obj)
+    def get_evolutions(self, obj):
 
-        serializers_pre_evolution = None
-        if obj.pokemon is not None:
-            serializers_pre_evolution = PokemonEvolutionSerializer(obj.pokemon, many=False).data
+        return EvolutionSerializer(obj, many=False).data
 
-        serializers_evolution = None
-        if pokemon_evolution is not None:
-            serializers_evolution = PokemonEvolutionSerializer(pokemon_evolution, many=True).data
-
-        return {'pre_evolution': serializers_pre_evolution, 'evolution': serializers_evolution}
 
 
